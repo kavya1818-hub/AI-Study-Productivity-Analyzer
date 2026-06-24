@@ -1,0 +1,33 @@
+node_modules/
+dist/
+build/
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+venv/
+env/
+.vscode/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.DS_Store
+Thumbs.db
+#mangodb
+backend/.env
+coverage/
+
+# Temporary files
+*.tmp
+*.temp
+
+# React/Vite
+frontend/dist/
+
+# Python cache
+backend/__pycache__/
