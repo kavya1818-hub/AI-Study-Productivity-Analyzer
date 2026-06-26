@@ -1,5 +1,6 @@
 from flask import Blueprint, request, jsonify
 from mongodb import sessions_collection
+from bson import ObjectId
 
 session_bp = Blueprint("session", __name__)
 
@@ -31,3 +32,35 @@ def get_sessions():
         sessions.append(session)
 
     return jsonify(sessions)
+@session_bp.route("/sessions/<id>", methods=["DELETE"])
+def delete_session(id):
+    sessions_collection.delete_one(
+        {"_id": ObjectId(id)}
+    )
+
+    return jsonify(
+        {"message": "Session deleted successfully"}
+    )
+
+
+@session_bp.route("/sessions/<id>", methods=["PUT"])
+def update_session(id):
+
+    data = request.json
+
+    sessions_collection.update_one(
+        {"_id": ObjectId(id)},
+        {
+            "$set": {
+                "subject": data["subject"],
+                "duration": data["duration"],
+                "focus": data["focus"],
+                "distractions": data["distractions"],
+                "notes": data["notes"],
+            }
+        }
+    )
+
+    return jsonify(
+        {"message": "Session updated successfully"}
+    )
