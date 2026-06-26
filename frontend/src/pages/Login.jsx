@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import API from "../services/api";
 
 function Login() {
@@ -25,59 +25,154 @@ function Login() {
         })
       );
 
-      alert(res.data.message);
-
+      alert("Login Successful");
       navigate("/dashboard");
     } catch (error) {
       alert(
         error.response?.data?.message ||
-          "Login Failed"
+        "Login Failed"
       );
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="bg-white p-8 rounded-lg shadow-lg w-96">
+    <div className="min-h-screen grid lg:grid-cols-2">
 
-        <h2 className="text-3xl font-bold text-center mb-6">
-          Login
-        </h2>
+      {/* Left Side */}
+      <div className="hidden lg:block relative">
 
-        <form onSubmit={handleLogin} className="space-y-4">
+        <img
+          src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=1200&q=80"
+          alt="Study"
+          className="w-full h-screen object-cover"
+        />
 
-          <input
-            type="email"
-            placeholder="Email"
-            value={email}
-            onChange={(e) =>
-              setEmail(e.target.value)
-            }
-            className="w-full border p-3 rounded"
-            required
-          />
+        <div className="absolute inset-0 bg-black/50 flex flex-col justify-center px-16 text-white">
 
-          <input
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={(e) =>
-              setPassword(e.target.value)
-            }
-            className="w-full border p-3 rounded"
-            required
-          />
+          <h1 className="text-6xl font-bold mb-4">
+            StudyAI
+          </h1>
 
-          <button
-            type="submit"
-            className="w-full bg-blue-600 text-white p-3 rounded"
-          >
-            Login
-          </button>
+          <p className="text-xl mb-10 max-w-lg">
+            Smart Study Tracking, Learning Analytics,
+            Goal Management and AI Productivity Insights.
+          </p>
 
-        </form>
+          <div className="space-y-5 text-lg">
+
+            <div className="flex items-center gap-3">
+              <span className="text-2xl">📚</span>
+              <span>Track Study Sessions Efficiently</span>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <span className="text-2xl">📊</span>
+              <span>Visualize Learning Analytics</span>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <span className="text-2xl">🎯</span>
+              <span>Achieve Your Study Goals</span>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <span className="text-2xl">🤖</span>
+              <span>Get AI Productivity Insights</span>
+            </div>
+
+          </div>
+
+        </div>
 
       </div>
+
+      {/* Right Side */}
+      <div className="flex justify-center items-center bg-slate-100">
+
+        <div className="bg-white w-[500px] p-12 rounded-3xl shadow-2xl">
+
+          <div className="text-center mb-8">
+
+            <div className="text-6xl mb-4">
+              🎓
+            </div>
+
+            <h2 className="text-4xl font-bold text-blue-600">
+              Welcome Back
+            </h2>
+
+            <p className="text-gray-500 mt-2">
+              Login to continue your learning journey
+            </p>
+
+          </div>
+
+          <form
+            onSubmit={handleLogin}
+            className="space-y-5"
+          >
+
+            <div>
+
+              <label className="block mb-2 font-semibold text-gray-700">
+                Email
+              </label>
+
+              <input
+                type="email"
+                placeholder="Enter Email"
+                value={email}
+                onChange={(e) =>
+                  setEmail(e.target.value)
+                }
+                className="w-full border-2 border-gray-200 p-4 rounded-xl focus:outline-none focus:border-blue-500"
+                required
+              />
+
+            </div>
+
+            <div>
+
+              <label className="block mb-2 font-semibold text-gray-700">
+                Password
+              </label>
+
+              <input
+                type="password"
+                placeholder="Enter Password"
+                value={password}
+                onChange={(e) =>
+                  setPassword(e.target.value)
+                }
+                className="w-full border-2 border-gray-200 p-4 rounded-xl focus:outline-none focus:border-blue-500"
+                required
+              />
+
+            </div>
+
+            <button
+              type="submit"
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white p-4 rounded-xl font-semibold transition duration-300"
+            >
+              Login
+            </button>
+
+          </form>
+
+          <p className="text-center mt-8 text-gray-600">
+            Don't have an account?{" "}
+            <Link
+              to="/register"
+              className="text-blue-600 font-semibold hover:underline"
+            >
+              Register
+            </Link>
+          </p>
+
+        </div>
+
+      </div>
+
     </div>
   );
 }
