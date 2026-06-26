@@ -23,7 +23,7 @@ function StudySession() {
         focus: Number(focus),
         distractions: Number(distractions),
         notes,
-        date: new Date().toLocaleDateString(),
+        date: new Date().toISOString(),
       };
 
       await API.post("/sessions", session);

@@ -1,3 +1,5 @@
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
 import {
   BarChart,
   Bar,
@@ -21,22 +23,46 @@ function Analytics() {
 
   const [sessions, setSessions] = useState([]);
   const [goal, setGoal] = useState(0);
-
+  const [editingSession, setEditingSession] = useState(null);
+  const [editForm, setEditForm] = useState({
+  subject: "",
+  duration: "",
+  focus: "",
+  distractions: "",
+  notes: "",
+});
   useEffect(() => {
     fetchData();
   }, []);
 
-  const fetchData = async () => {
-    try {
-      const sessionsRes = await API.get("/sessions");
-      const goalRes = await API.get("/goal");
+const fetchData = async () => {
+  try {
+    const user = JSON.parse(localStorage.getItem("user"));
 
-      setSessions(sessionsRes.data);
-      setGoal(goalRes.data.target || 0);
-    } catch (error) {
-      console.error(error);
-    }
-  };
+    console.log("LocalStorage User:", user);
+
+    const sessionsRes = await API.get("/sessions", {
+      params: {
+        email: user?.email,
+      },
+    });
+
+    console.log("Sessions Response:", sessionsRes);
+
+    const goalRes = await API.get("/goal", {
+      params: {
+        email: user?.email,
+      },
+    });
+
+    console.log("Goal Response:", goalRes);
+
+    setSessions(sessionsRes.data);
+    setGoal(goalRes.data.target || 0);
+  } catch (err) {
+    console.error("Analytics Error:", err);
+  }
+};
 
   const totalHours = sessions.reduce(
     (sum, session) => sum + Number(session.duration),
@@ -97,6 +123,168 @@ function Analytics() {
       focus: Number(session.focus),
     })
   );
+  const deleteSession = async (id) => {
+  if (!window.confirm("Delete this session?")) return;
+
+  try {
+    await API.delete(`/sessions/${id}`);
+
+    fetchData();
+
+    alert("Session deleted successfully.");
+  } catch (error) {
+    console.error(error);
+    alert("Failed to delete session.");
+  }
+};
+
+const editSession = (session) => {
+  setEditingSession(session);
+  setEditForm({
+    subject: session.subject,
+    duration: session.duration,
+    focus: session.focus,
+    distractions: session.distractions,
+    notes: session.notes,
+  });
+
+};
+const saveEditedSession = async () => {
+  try {
+
+    await API.put(
+      `/sessions/${editingSession._id}`,
+      editForm
+    );
+
+    alert("Session Updated!");
+
+    setEditingSession(null);
+
+    fetchData();
+
+  } catch (error) {
+
+    console.error(error);
+
+    alert("Update Failed");
+
+  }
+};
+
+const now = new Date();
+const weeklyHours = sessions
+  .filter((session) => {
+    if (!session.date) return false;
+
+    const parts = session.date.split("/");
+
+    const d = new Date(
+      parts[2],
+      parts[1] - 1,
+      parts[0]
+    );
+
+    const diff =
+      (now - d) / (1000 * 60 * 60 * 24);
+
+    return diff <= 7;
+  })
+  .reduce(
+    (sum, session) =>
+      sum + Number(session.duration),
+    0
+  );
+
+const monthlyHours = sessions
+  .filter((session) => {
+    if (!session.date) return false;
+
+    const parts = session.date.split("/");
+
+    const d = new Date(
+      parts[2],
+      parts[1] - 1,
+      parts[0]
+    );
+
+    return (
+      d.getMonth() === now.getMonth() &&
+      d.getFullYear() === now.getFullYear()
+    );
+  })
+  .reduce(
+    (sum, session) =>
+      sum + Number(session.duration),
+    0
+  );
+
+const exportCSV = () => {
+  const headers = [
+    "Subject",
+    "Hours",
+    "Focus",
+    "Distractions",
+    "Date",
+  ];
+
+  const rows = sessions.map((session) => [
+    session.subject,
+    session.duration,
+    session.focus,
+    session.distractions,
+    session.date,
+  ]);
+
+  const csvContent = [
+    headers,
+    ...rows,
+  ]
+    .map((row) => row.join(","))
+    .join("\n");
+
+  const blob = new Blob([csvContent], {
+    type: "text/csv;charset=utf-8;",
+  });
+
+  const url = URL.createObjectURL(blob);
+
+  const link = document.createElement("a");
+
+  link.href = url;
+  link.download = "StudyAnalytics.csv";
+
+  link.click();
+};
+
+const exportPDF = () => {
+  const doc = new jsPDF();
+
+  doc.setFontSize(18);
+  doc.text("Study Analytics Report", 14, 20);
+
+  autoTable(doc, {
+    startY: 30,
+
+    head: [[
+      "Subject",
+      "Hours",
+      "Focus",
+      "Distractions",
+      "Date",
+    ]],
+
+    body: sessions.map((session) => [
+      session.subject,
+      session.duration,
+      session.focus,
+      session.distractions,
+      session.date,
+    ]),
+  });
+
+  doc.save("StudyAnalytics.pdf");
+};
 
   const COLORS = [
     "#3B82F6",
@@ -110,9 +298,31 @@ function Analytics() {
   return (
     <div className="min-h-screen bg-gray-100 p-8">
 
-      <h1 className="text-4xl font-bold mb-8">
-        Study Analytics Dashboard
-      </h1>
+      <div className="flex justify-between items-center mb-8">
+
+  <h1 className="text-4xl font-bold">
+    Study Analytics Dashboard
+  </h1>
+
+  <div className="flex gap-3">
+
+    <button
+      onClick={exportPDF}
+      className="bg-red-600 hover:bg-red-700 text-white px-5 py-3 rounded-xl shadow"
+    >
+      Export PDF
+    </button>
+
+    <button
+      onClick={exportCSV}
+      className="bg-green-600 hover:bg-green-700 text-white px-5 py-3 rounded-xl shadow"
+    >
+      Export CSV
+    </button>
+
+  </div>
+
+</div>
 
       {/* Summary Cards */}
       <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
@@ -154,7 +364,41 @@ function Analytics() {
         </div>
 
       </div>
+      <div className="grid md:grid-cols-2 gap-6 mb-8">
 
+  <div className="bg-gradient-to-r from-green-500 to-green-700 text-white rounded-2xl shadow-lg p-6">
+
+    <h3 className="text-xl font-semibold">
+      📅 Weekly Study Hours
+    </h3>
+
+    <p className="text-5xl font-bold mt-4">
+      {weeklyHours}
+    </p>
+
+    <p className="mt-2 text-green-100">
+      Hours studied in the last 7 days
+    </p>
+
+  </div>
+
+  <div className="bg-gradient-to-r from-indigo-500 to-purple-700 text-white rounded-2xl shadow-lg p-6">
+
+    <h3 className="text-xl font-semibold">
+      📈 Monthly Study Hours
+    </h3>
+
+    <p className="text-5xl font-bold mt-4">
+      {monthlyHours}
+    </p>
+
+    <p className="mt-2 text-indigo-100">
+      Hours studied this month
+    </p>
+
+  </div>
+
+</div>
       {/* Goal Progress */}
       <div className="bg-white p-6 rounded-xl shadow mb-8">
 
@@ -337,6 +581,9 @@ function Analytics() {
                 <th className="p-3">
                   Date
                 </th>
+                <th className="p-3">
+                  Actions
+                </th>
 
               </tr>
 
@@ -370,11 +617,25 @@ function Analytics() {
                   <td className="p-3">
                     {session.date}
                   </td>
-
-                </tr>
+                  <td className="p-3">
+                    <div className="flex justify-center gap-2">
+                      <button
+                      onClick={() => editSession(session)}
+                      className="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded"
+                      >
+                        Edit
+                      </button>
+                      <button
+                      onClick={() => deleteSession(session._id)}
+                      className="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded"
+                      >
+                        Delete
+                        </button>
+                      </div>
+                      </td>
+                    </tr>
 
               ))}
-
             </tbody>
 
           </table>
@@ -382,7 +643,104 @@ function Analytics() {
         </div>
 
       </div>
+      {editingSession && (
+  <div className="fixed inset-0 bg-black/40 flex justify-center items-center z-50">
 
+    <div className="bg-white w-[500px] rounded-xl shadow-xl p-6">
+
+      <h2 className="text-2xl font-bold mb-6">
+        Edit Study Session
+      </h2>
+
+      <div className="space-y-4">
+
+        <input
+          className="w-full border p-3 rounded"
+          placeholder="Subject"
+          value={editForm.subject}
+          onChange={(e) =>
+            setEditForm({
+              ...editForm,
+              subject: e.target.value,
+            })
+          }
+        />
+
+        <input
+          type="number"
+          className="w-full border p-3 rounded"
+          placeholder="Duration"
+          value={editForm.duration}
+          onChange={(e) =>
+            setEditForm({
+              ...editForm,
+              duration: e.target.value,
+            })
+          }
+        />
+
+        <input
+          type="number"
+          className="w-full border p-3 rounded"
+          placeholder="Focus"
+          value={editForm.focus}
+          onChange={(e) =>
+            setEditForm({
+              ...editForm,
+              focus: e.target.value,
+            })
+          }
+        />
+
+        <input
+          type="number"
+          className="w-full border p-3 rounded"
+          placeholder="Distractions"
+          value={editForm.distractions}
+          onChange={(e) =>
+            setEditForm({
+              ...editForm,
+              distractions: e.target.value,
+            })
+          }
+        />
+
+        <textarea
+          className="w-full border p-3 rounded"
+          placeholder="Notes"
+          value={editForm.notes}
+          onChange={(e) =>
+            setEditForm({
+              ...editForm,
+              notes: e.target.value,
+            })
+          }
+        />
+
+      </div>
+
+      <div className="flex justify-end gap-3 mt-6">
+
+        <button
+          onClick={() => setEditingSession(null)}
+          className="px-5 py-2 bg-gray-400 text-white rounded"
+        >
+          Cancel
+        </button>
+
+        <button
+          onClick={saveEditedSession}
+          className="px-5 py-2 bg-blue-600 text-white rounded"
+        >
+          Save Changes
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+)}
     </div>
   );
 }

@@ -73,24 +73,24 @@ const fetchData = async () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 p-8">
+    <div className="min-h-screen bg-gradient-to-br from-slate-100 via-blue-50 to-indigo-100 p-8">
 
       {/* Header */}
-      <div className="flex justify-between items-center mb-8">
+      <div className="flex justify-between items-center mb-10 bg-gradient-to-r from-blue-600 to-indigo-700 rounded-3xl shadow-xl p-8 text-white">
 
         <div>
-          <h1 className="text-4xl font-bold">
+          <h1 className="text-5xl font-bold">
             Welcome, {user?.name} 👋
           </h1>
 
-          <p className="text-gray-600 mt-2">
+          <p className="text-blue-100 mt-2 text-lg">
             Track your productivity and improve your study habits.
           </p>
         </div>
 
         <button
           onClick={logout}
-          className="bg-red-600 text-white px-5 py-3 rounded-lg"
+          className="bg-white text-red-600 px-6 py-3 rounded-xl font-semibold hover:scale-105 transition duration-300 shadow"
         >
           Logout
         </button>
@@ -100,9 +100,9 @@ const fetchData = async () => {
       {/* Stats Cards */}
       <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
 
-        <div className="bg-white p-6 rounded-xl shadow">
+        <div className="bg-white p-6 rounded-2xl shadow-lg hover:shadow-2xl hover:-translate-y-1 transition-all duration-300">
           <h3 className="font-semibold text-gray-500">
-            Total Study Hours
+            📚 Total Study Hours
           </h3>
 
           <p className="text-3xl font-bold mt-2">
@@ -112,7 +112,7 @@ const fetchData = async () => {
 
         <div className="bg-white p-6 rounded-xl shadow">
           <h3 className="font-semibold text-gray-500">
-            Productivity Score
+           ⚡ Productivity Score
           </h3>
 
           <p className="text-3xl font-bold mt-2">
@@ -122,7 +122,7 @@ const fetchData = async () => {
 
         <div className="bg-white p-6 rounded-xl shadow">
           <h3 className="font-semibold text-gray-500">
-            Current Streak
+           🔥 Current Streak
           </h3>
 
           <p className="text-3xl font-bold mt-2">
@@ -132,10 +132,10 @@ const fetchData = async () => {
 
         <div className="bg-white p-6 rounded-xl shadow">
           <h3 className="font-semibold text-gray-500">
-            Study Sessions
+            📖 Study Sessions
           </h3>
 
-          <p className="text-3xl font-bold mt-2">
+          <p className="text-5xl font-extrabold text-blue-600 mt-3">
             {totalSessions}
           </p>
         </div>
@@ -143,7 +143,7 @@ const fetchData = async () => {
       </div>
 
       {/* Quick Actions */}
-      <div className="bg-white p-6 rounded-xl shadow mb-8">
+      <div className="bg-white p-8 rounded-2xl shadow-lg mb-8">
 
         <h2 className="text-2xl font-bold mb-4">
           Quick Actions
@@ -152,19 +152,19 @@ const fetchData = async () => {
         <div className="flex gap-4 flex-wrap">
 
           <Link to="/study-session">
-            <button className="bg-blue-600 text-white px-5 py-3 rounded-lg">
+            <button className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl shadow transition-all duration-300">
               Start Study Session
             </button>
           </Link>
 
           <Link to="/analytics">
-            <button className="bg-green-600 text-white px-5 py-3 rounded-lg">
+            <button className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-xl shadow transition-all duration-300">
               View Analytics
             </button>
           </Link>
 
           <Link to="/goals">
-            <button className="bg-purple-600 text-white px-5 py-3 rounded-lg">
+            <button className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-xl shadow transition-all duration-300">
               Set Goal
             </button>
           </Link>
@@ -174,36 +174,43 @@ const fetchData = async () => {
       </div>
 
       {/* Latest Session */}
-      <div className="bg-white p-6 rounded-xl shadow mb-8">
-
+      <div className="bg-white p-8 rounded-2xl shadow-lg mb-8">
         <h2 className="text-2xl font-bold mb-4">
           Latest Session
         </h2>
 
         {latestSession ? (
-          <div className="space-y-2">
+<div className="grid md:grid-cols-2 gap-5">
 
-            <p>
-              <strong>Subject:</strong>{" "}
-              {latestSession.subject}
-            </p>
+  <div className="bg-blue-50 rounded-xl p-4">
+    <p className="text-gray-500">📘 Subject</p>
+    <h3 className="text-2xl font-bold text-blue-600">
+      {latestSession.subject}
+    </h3>
+  </div>
 
-            <p>
-              <strong>Duration:</strong>{" "}
-              {latestSession.duration} Hours
-            </p>
+  <div className="bg-green-50 rounded-xl p-4">
+    <p className="text-gray-500">⏱ Duration</p>
+    <h3 className="text-2xl font-bold text-green-600">
+      {latestSession.duration} Hours
+    </h3>
+  </div>
 
-            <p>
-              <strong>Focus:</strong>{" "}
-              {latestSession.focus}/10
-            </p>
+  <div className="bg-yellow-50 rounded-xl p-4">
+    <p className="text-gray-500">🎯 Focus</p>
+    <h3 className="text-2xl font-bold text-yellow-600">
+      {latestSession.focus}/10
+    </h3>
+  </div>
 
-            <p>
-              <strong>Date:</strong>{" "}
-              {latestSession.date}
-            </p>
+  <div className="bg-purple-50 rounded-xl p-4">
+    <p className="text-gray-500">📅 Date</p>
+    <h3 className="text-2xl font-bold text-purple-600">
+      {latestSession.date}
+    </h3>
+  </div>
 
-          </div>
+</div>
         ) : (
           <p>No sessions recorded.</p>
         )}
@@ -211,7 +218,7 @@ const fetchData = async () => {
       </div>
 
       {/* Goal Progress */}
-      <div className="bg-white p-6 rounded-xl shadow mb-8">
+<div className="bg-white p-8 rounded-2xl shadow-lg mb-8">
 
         <h2 className="text-2xl font-bold mb-4">
           Goal Progress
@@ -221,10 +228,10 @@ const fetchData = async () => {
           Goal: {goal} Hours
         </p>
 
-        <div className="w-full bg-gray-200 rounded-full h-6">
+        <div className="w-full bg-gray-200 rounded-full h-8 overflow-hidden">
 
           <div
-            className="bg-purple-600 h-6 rounded-full text-white text-center"
+            className="bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 h-8 rounded-full flex items-center justify-center text-white font-bold"
             style={{
               width: `${goalProgress}%`,
             }}
@@ -237,60 +244,92 @@ const fetchData = async () => {
       </div>
 
       {/* AI Insights */}
-      <div className="bg-white p-6 rounded-xl shadow">
+      
+<div className="bg-white p-8 rounded-2xl shadow-lg mb-8">
 
-        <h2 className="text-2xl font-bold mb-4">
-          AI Insights
-        </h2>
+  <h2 className="text-2xl font-bold mb-6">
+    AI Insights
+  </h2>
 
-        {totalSessions === 0 ? (
-          <p>
-            Start studying to unlock AI recommendations.
-          </p>
-        ) : (
-          <ul className="space-y-2">
+  {totalSessions === 0 ? (
 
-            <li>
-              📌 Total Study Time:
-              {" "}
-              {totalHours} Hours
-            </li>
+    <p className="text-gray-500">
+      Start studying to unlock AI recommendations.
+    </p>
 
-            <li>
-              📌 Completed
-              {" "}
-              {totalSessions}
-              {" "}
-              Sessions
-            </li>
+  ) : (
 
-            <li>
-              📌 Productivity Score:
-              {" "}
-              {productivityScore}%
-            </li>
+    <div className="grid md:grid-cols-2 gap-5">
 
-            <li>
-              {productivityScore >= 70
-                ? "🔥 Excellent consistency!"
-                : productivityScore >= 50
-                ? "✅ Good progress. Stay focused."
-                : "⚠️ Focus needs improvement."}
-            </li>
+      <div className="bg-blue-50 border-l-4 border-blue-500 rounded-xl p-5">
+        <h3 className="font-semibold text-blue-700">
+          📚 Study Time
+        </h3>
 
-            <li>
-              🎯 Goal Completion:
-              {" "}
-              {goalProgress}%
-            </li>
+        <p className="text-2xl font-bold mt-2">
+          {totalHours} Hours
+        </p>
+      </div>
 
-          </ul>
-        )}
+      <div className="bg-green-50 border-l-4 border-green-500 rounded-xl p-5">
+        <h3 className="font-semibold text-green-700">
+          ✅ Sessions Completed
+        </h3>
+
+        <p className="text-2xl font-bold mt-2">
+          {totalSessions}
+        </p>
+      </div>
+
+      <div className="bg-yellow-50 border-l-4 border-yellow-500 rounded-xl p-5">
+        <h3 className="font-semibold text-yellow-700">
+          ⚡ Productivity Score
+        </h3>
+
+        <p className="text-2xl font-bold mt-2">
+          {productivityScore}%
+        </p>
+      </div>
+
+      <div className="bg-purple-50 border-l-4 border-purple-500 rounded-xl p-5">
+        <h3 className="font-semibold text-purple-700">
+          🎯 Goal Progress
+        </h3>
+
+        <p className="text-2xl font-bold mt-2">
+          {goalProgress}%
+        </p>
+      </div>
+
+      <div className="md:col-span-2 bg-gray-50 border-l-4 border-indigo-500 rounded-xl p-5">
+
+        <h3 className="font-semibold text-indigo-700 mb-3">
+          💡 AI Recommendation
+        </h3>
+
+        <p className="text-gray-700 leading-7">
+
+          {productivityScore >= 80
+            ? "Excellent work! Your study consistency is outstanding. Keep following the same schedule to maintain high productivity."
+
+            : productivityScore >= 60
+            ? "Good progress! Try reducing distractions and increasing your focus level to improve productivity."
+
+            : "Your productivity is currently below average. Study in shorter focused sessions, avoid distractions, and follow a daily timetable."}
+
+        </p>
 
       </div>
 
     </div>
-  );
-}
 
+  )}
+
+</div>
+
+</div>
+
+);
+
+}
 export default Dashboard;
