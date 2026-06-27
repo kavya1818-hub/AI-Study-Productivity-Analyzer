@@ -18,7 +18,7 @@ function StudySession() {
       const user = JSON.parse(localStorage.getItem("user"));
       const session = {
         email: user.email,
-        subject,
+        subject: subject.trim(),
         duration: Number(duration),
         focus: Number(focus),
         distractions: Number(distractions),

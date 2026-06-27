@@ -1,16 +1,125 @@
-# React + Vite
+# AI Study Productivity Analyzer
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A full-stack AI-powered study productivity tracker that helps students monitor study sessions, analyze learning habits, set goals, and improve productivity through interactive analytics.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+### Authentication
 
-## React Compiler
+* User Registration
+* User Login
+* Secure authentication
+* Logout functionality
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+### Dashboard
 
-## Expanding the ESLint configuration
+* Personalized welcome dashboard
+* Total study hours
+* Productivity score
+* Current study streak
+* Total study sessions
+* Latest study session summary
+* Goal progress tracker
+* AI-generated study insights
+* Quick navigation
+* Achievement badges
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+### Study Session Management
+
+* Add study sessions
+* Edit study sessions
+* Delete study sessions
+* Search sessions by subject
+* Track:
+
+  * Subject
+  * Study Hours
+  * Focus Score
+  * Distractions
+  * Date
+
+### Analytics Dashboard
+
+* KPI Cards
+
+  * Total Sessions
+  * Total Study Hours
+  * Average Focus
+  * Productivity Score
+  * Top Subject
+* Weekly Study Hours
+* Monthly Study Hours
+* Goal Progress Bar
+* Hours by Subject (Bar Chart)
+* Subject Distribution (Pie Chart)
+* Focus Trend (Line Chart)
+* Performance Insights
+* AI Recommendations
+* Subject Ranking based on Total Study Hours
+* Session Status (Excellent / Good / Needs Improvement)
+
+### Export Features
+
+* Export analytics report as PDF
+* Export session history as CSV
+
+## Technologies Used
+
+### Frontend
+
+* React.js
+* React Router
+* Tailwind CSS
+* Axios
+* Recharts
+* jsPDF
+
+### Backend
+
+* Node.js
+* Express.js
+
+### Database
+
+* MongoDB
+* Mongoose
+
+## Project Highlights
+
+* Full CRUD operations
+* Interactive dashboard
+* Real-time analytics
+* Data visualization
+* Goal tracking
+* AI-based productivity insights
+* PDF & CSV report generation
+* Responsive user interface
+
+## Future Enhancements
+
+* Dark Mode
+* Email reminders
+* AI chatbot for study assistance
+* Calendar integration
+* Weekly productivity reports
+
+## Screenshots
+### Home Page
+![Home](screenshots/Home.png)
+### Login
+![Login](screenshots/login.png)
+### Dashboard
+![Dashboard](screenshots/dashboard.png)
+### Analytics
+![Analytics](screenshots/analytics(1).png)
+![Analytics](screenshots/analytics(2).png)
+### Study Session
+![Study Session](screenshots/study-session.png)
+### Goals
+![Goals](screenshots/goals.png)
+### PDF Report
+![PDF](screenshots/pdf-report.png)
+
+## Author
+
+**Daggubati Kavya**

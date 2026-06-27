@@ -24,6 +24,7 @@ function Analytics() {
   const [sessions, setSessions] = useState([]);
   const [goal, setGoal] = useState(0);
   const [editingSession, setEditingSession] = useState(null);
+  const [search, setSearch] = useState("");
   const [editForm, setEditForm] = useState({
   subject: "",
   duration: "",
@@ -100,22 +101,32 @@ const fetchData = async () => {
         )
       : 0;
 
-  const subjectData = [];
+const subjectMap = {};
+sessions.forEach((session) => {
+  const subject = session.subject.trim();
+  subjectMap[subject] =
+    (subjectMap[subject] || 0) +
+    Number(session.duration);
+});
+const subjectData = Object.entries(subjectMap).map(
+  ([subject, hours]) => ({
+    subject,
+    hours,
+  })
+);
 
-  sessions.forEach((session) => {
-    const existing = subjectData.find(
-      (item) => item.subject === session.subject
-    );
+console.table(subjectData);
 
-    if (existing) {
-      existing.hours += Number(session.duration);
-    } else {
-      subjectData.push({
-        subject: session.subject,
-        hours: Number(session.duration),
-      });
-    }
-  });
+  const rankedSubjects = [...subjectData].sort(
+    (a, b) => b.hours - a.hours
+  );
+  console.log(subjectData);
+  console.log(rankedSubjects);
+
+  const topSubject =
+  rankedSubjects.length > 0
+    ? rankedSubjects[0]
+    : null;
 
   const focusTrend = sessions.map(
     (session, index) => ({
@@ -173,26 +184,21 @@ const saveEditedSession = async () => {
 };
 
 const now = new Date();
+
 const weeklyHours = sessions
   .filter((session) => {
     if (!session.date) return false;
 
-    const parts = session.date.split("/");
-
-    const d = new Date(
-      parts[2],
-      parts[1] - 1,
-      parts[0]
-    );
+    const d = new Date(session.date);
 
     const diff =
-      (now - d) / (1000 * 60 * 60 * 24);
+      (now.getTime() - d.getTime()) /
+      (1000 * 60 * 60 * 24);
 
-    return diff <= 7;
+    return diff >= 0 && diff <= 7;
   })
   .reduce(
-    (sum, session) =>
-      sum + Number(session.duration),
+    (sum, session) => sum + Number(session.duration),
     0
   );
 
@@ -200,13 +206,7 @@ const monthlyHours = sessions
   .filter((session) => {
     if (!session.date) return false;
 
-    const parts = session.date.split("/");
-
-    const d = new Date(
-      parts[2],
-      parts[1] - 1,
-      parts[0]
-    );
+    const d = new Date(session.date);
 
     return (
       d.getMonth() === now.getMonth() &&
@@ -214,8 +214,7 @@ const monthlyHours = sessions
     );
   })
   .reduce(
-    (sum, session) =>
-      sum + Number(session.duration),
+    (sum, session) => sum + Number(session.duration),
     0
   );
 
@@ -325,7 +324,7 @@ const exportPDF = () => {
 </div>
 
       {/* Summary Cards */}
-      <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+      <div className="grid md:grid-cols-2 lg:grid-cols-5 gap-6 mb-10">
 
         <div className="bg-white p-6 rounded-xl shadow">
           <h3 className="text-gray-500 font-semibold">
@@ -363,31 +362,38 @@ const exportPDF = () => {
           </p>
         </div>
 
+        <div className="bg-gradient-to-r from-cyan-500 via-blue-600 to-indigo-700 text-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300">
+          <h3 className="font-semibold">
+            🏆 Top Subject
+          </h3>
+          <p className="text-3xl font-bold mt-2">
+            {topSubject ? topSubject.subject : "--"}
+          </p>
+          <p className="mt-2 text-sm">
+            {topSubject
+            ? `${topSubject.hours} Hours Studied`
+            : "No sessions yet"}
+          </p>
+          </div>
       </div>
+
       <div className="grid md:grid-cols-2 gap-6 mb-8">
-
-  <div className="bg-gradient-to-r from-green-500 to-green-700 text-white rounded-2xl shadow-lg p-6">
-
-    <h3 className="text-xl font-semibold">
-      📅 Weekly Study Hours
-    </h3>
-
-    <p className="text-5xl font-bold mt-4">
-      {weeklyHours}
-    </p>
-
-    <p className="mt-2 text-green-100">
-      Hours studied in the last 7 days
-    </p>
-
-  </div>
-
-  <div className="bg-gradient-to-r from-indigo-500 to-purple-700 text-white rounded-2xl shadow-lg p-6">
-
-    <h3 className="text-xl font-semibold">
-      📈 Monthly Study Hours
-    </h3>
-
+        
+        <div className="bg-gradient-to-r from-green-500 to-green-700 text-white rounded-2xl shadow-lg p-6">
+          <h3 className="text-xl font-semibold">
+            📅 Weekly Study Hours
+          </h3>
+        <p className="text-5xl font-bold mt-4">
+          {weeklyHours}
+        </p>
+        <p className="mt-2 text-green-100">
+          Hours studied in the last 7 days
+        </p>
+      </div>
+      <div className="bg-gradient-to-r from-indigo-500 to-purple-700 text-white rounded-2xl shadow-lg p-6">
+        <h3 className="text-xl font-semibold">
+          📈 Monthly Study Hours
+        </h3>
     <p className="text-5xl font-bold mt-4">
       {monthlyHours}
     </p>
@@ -554,6 +560,13 @@ const exportPDF = () => {
           Session History
         </h2>
 
+        <input
+        type="text"
+        placeholder="🔍 Search by subject..."
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
+        className="border rounded-lg p-3 mb-4 w-80"
+        />
         <div className="overflow-x-auto">
 
           <table className="w-full border">
@@ -575,6 +588,10 @@ const exportPDF = () => {
                 </th>
 
                 <th className="p-3">
+                  Status
+                </th>
+
+                <th className="p-3">
                   Distractions
                 </th>
 
@@ -591,8 +608,13 @@ const exportPDF = () => {
 
             <tbody>
 
-              {sessions.map((session, index) => (
-
+              {sessions
+              .filter((session) =>
+                session.subject
+                .toLowerCase()
+                .includes(search.toLowerCase())
+              )
+              .map((session, index) => (
                 <tr
                   key={index}
                   className="border-b text-center hover:bg-gray-100"
@@ -609,13 +631,27 @@ const exportPDF = () => {
                   <td className="p-3">
                     {session.focus}/10
                   </td>
-
+                  <td>
+                    {session.focus >= 8 ? (
+                      <span className="text-green-600 font-semibold">
+                        🟢 Excellent
+                      </span>
+                    ) : session.focus >= 6 ? (
+                    <span className="text-yellow-600 font-semibold">
+                      🟡 Good
+                    </span>
+                  ) : (
+                  <span className="text-red-600 font-semibold">
+                    🔴 Needs Improvement
+                  </span>
+                )}
+                </td>
                   <td className="p-3">
                     {session.distractions}
                   </td>
 
                   <td className="p-3">
-                    {session.date}
+                    {new Date(session.date).toLocaleDateString()}
                   </td>
                   <td className="p-3">
                     <div className="flex justify-center gap-2">
@@ -643,8 +679,77 @@ const exportPDF = () => {
         </div>
 
       </div>
-      {editingSession && (
-  <div className="fixed inset-0 bg-black/40 flex justify-center items-center z-50">
+      {/* Subject Ranking */}
+
+<div className="bg-white p-6 rounded-xl shadow mt-8">
+
+  <h2 className="text-2xl font-bold mb-6">
+    🏆 Subject Ranking
+  </h2>
+
+  {rankedSubjects.length === 0 ? (
+
+    <p className="text-gray-500">
+      No study sessions available.
+    </p>
+
+  ) : (
+
+    <div className="space-y-4">
+
+      {rankedSubjects.map((subject, index) => (
+
+        <div
+          key={index}
+          className="flex justify-between items-center p-4 rounded-lg bg-gray-50 hover:bg-blue-50 transition"
+        >
+
+          <div className="flex items-center gap-4">
+
+            <span className="text-3xl">
+
+              {index === 0
+                ? "🥇"
+                : index === 1
+                ? "🥈"
+                : index === 2
+                ? "🥉"
+                : "🏅"}
+
+            </span>
+
+            <div>
+
+              <h3 className="font-bold text-lg">
+                {subject.subject}
+              </h3>
+
+              <p className="text-gray-500">
+                Rank #{index + 1}
+              </p>
+
+            </div>
+
+          </div>
+
+          <div className="text-right">
+
+            <p className="text-2xl font-bold text-blue-600">
+              {subject.hours} hrs
+            </p>
+
+          </div>
+
+        </div>
+
+      ))}
+
+    </div>
+  )}
+</div>
+
+    {editingSession && (
+    <div className="fixed inset-0 bg-black/40 flex justify-center items-center z-50">
 
     <div className="bg-white w-[500px] rounded-xl shadow-xl p-6">
 

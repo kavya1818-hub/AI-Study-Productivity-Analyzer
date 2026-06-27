@@ -326,7 +326,100 @@ const fetchData = async () => {
   )}
 
 </div>
+{/* Achievements */}
+<div className="bg-white p-8 rounded-2xl shadow-lg mt-8">
 
+  <h2 className="text-2xl font-bold mb-6">
+    🏆 Achievements
+  </h2>
+
+  <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-5">
+
+    <div
+      className={`rounded-xl p-5 text-center shadow ${
+        totalSessions >= 1
+          ? "bg-green-100"
+          : "bg-gray-100"
+      }`}
+    >
+      <div className="text-5xl mb-2">🎉</div>
+
+      <h3 className="font-bold">
+        First Session
+      </h3>
+      <p className="text-sm text-gray-600">
+        Complete your first study session.
+      </p>
+      <p className="mt-3 font-bold text-green-600">
+        {totalSessions >= 1 ? "✅ Unlocked" : "🔒 Locked"}
+      </p>
+    </div>
+
+    <div
+      className={`rounded-xl p-5 text-center shadow ${
+        totalHours >= 10
+          ? "bg-yellow-100"
+          : "bg-gray-100"
+      }`}
+    >
+      <div className="text-5xl mb-2">⏰</div>
+
+      <h3 className="font-bold">
+        10 Study Hours
+      </h3>
+      <p className="text-sm text-gray-600">
+        Study for at least 10 hours.
+      </p>
+      <p className="mt-3 font-bold text-yellow-600">
+        {totalHours >= 10 ? "✅ Unlocked" : "🔒 Locked"}
+      </p>
+    </div>
+
+    <div
+      className={`rounded-xl p-5 text-center shadow ${
+        productivityScore >= 80
+          ? "bg-blue-100"
+          : "bg-gray-100"
+      }`}
+    >
+      <div className="text-5xl mb-2">⚡</div>
+
+      <h3 className="font-bold">
+        Productivity Pro
+      </h3>
+
+      <p className="text-sm text-gray-600">
+        Reach 80% productivity.
+      </p>
+      <p className="mt-3 font-bold text-blue-600">
+        {productivityScore >= 80 ? "✅ Unlocked" : "🔒 Locked"}
+      </p>
+    </div>
+
+    <div
+      className={`rounded-xl p-5 text-center shadow ${
+        goalProgress >= 100
+          ? "bg-purple-100"
+          : "bg-gray-100"
+      }`}
+    >
+      <div className="text-5xl mb-2">🎯</div>
+
+      <h3 className="font-bold">
+        Goal Achiever
+      </h3>
+      <p className="mt-3 font-bold text-purple-600">
+        {goalProgress >= 100 ? "✅ Unlocked" : "🔒 Locked"}
+      </p>
+
+      <p className="text-sm text-gray-600">
+        Complete your study goal.
+      </p>
+    </div>
+
+  </div>
+
+</div>
 </div>
 
 );
